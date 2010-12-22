@@ -1,0 +1,4 @@
+exports.config = {
+  oAuthConsumerKey: "OAuth consumer key",
+  oAuthConsumerToken: "OAuth consumer token"
+};

@@ -1,0 +1,8 @@
+### Prerequisites
+
+- Express
+- node-oauth
+- mongoose
+- jade
+- expresso 
+
