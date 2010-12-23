@@ -3,6 +3,7 @@
 - Express
 - node-oauth
 - mongoose
+- connect-mongodb
 - jade
 - expresso 
 
