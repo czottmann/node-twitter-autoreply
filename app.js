@@ -3,6 +3,7 @@
  */
 
 var express = require("express"),
+  Seq = require("seq"),
   OAuth = require("oauth").OAuth,
   mongoose = require("mongoose").Mongoose,
   mongoStore = require("connect-mongodb"),
@@ -47,33 +48,65 @@ function mongoStoreConnectionArgs() {
 }
 
 
-// Access control
+// Middleware: Access control
 
 function requireUser( req, res, next ) {
   
-  // TODO: User accounts
-
   if ( !( req.session.oauth && req.session.oauth.accessToken && req.session.oauth.accessTokenSecret ) ) {
     res.redirect("/login");
   }
   else {
-    next();
-  }
-  
-  /*
-  if (req.session.user_id) {
-    User.findById( req.session.user_id, function(user) {
-      if (user) {
-        req.currentUser = user;
+    Seq()
+      .seq( "user", function() {
+        var that = this;
+
+        User.find(req.session.oauth).first( function(user) {
+          if (!user) {
+            user = new User();
+            user.accessToken = req.session.oauth.accessToken;
+            user.accessTokenSecret = req.session.oauth.accessTokenSecret;
+            user.save();
+          }
+
+          that( null, user );
+        });
+      })    
+      .seq( function(user) {
+        req.user = user;
+
+        if (!user.twID) {
+          oa.get(
+            "http://api.twitter.com/1/statuses/user_timeline.json?count=1",
+            user.accessToken,
+            user.accessTokenSecret,
+            function( error, data ) {
+              var u;
+
+              if (!error) {
+                try {
+                  u = JSON.parse(data)[0].user;
+                }
+                catch(e) {
+                  u = {};
+                }
+
+                user.twID = u.id_str;
+                user.screenName = u.screen_name;
+                user.profileImageURL = u.profile_image_url;
+                user.save();
+              
+                next();
+              }
+              else {
+                next( new Error("Failed to fetch Twitter user data") );
+              }
+            }
+          );
+        }
+
         next();
-      } else {
-        res.redirect("/login");
-      }
-    });
-  } else {
-    res.redirect("/login");
+      });
   }
-  */
 }
 
 
@@ -109,7 +142,7 @@ app.configure( function() {
   app.use( express.staticProvider( __dirname + "/public" ) );
 });
 
-// app.User = User = require("./models.js").User(db);
+app.User = User = require("./models.js").User(db);
 
 
 
@@ -174,8 +207,6 @@ app.get( "/oauth_callback", function( req, res ) {
         throw new Error( "Error: " + error.statusCode );
       }
 
-      // TODO: User accounts
-
       req.session.oauth = {
         accessToken: oauthAccessToken,
         accessTokenSecret: oauthAccessTokenSecret
@@ -189,26 +220,22 @@ app.get( "/oauth_callback", function( req, res ) {
 
 /**
  * GET /member_area
- * The inner sanctum.
+ * The inner sanctum.  Requires auth'd user, will trigger login flow if not
+ * authenticated.
  */
 
 app.get( "/member_area", requireUser, function( req, res ) {
+  var user = req.user;
 
-  oa.get(
-    "http://api.twitter.com/1/users/lookup.json?screen_name=hmans",
-    req.session.oauth.accessToken,
-    req.session.oauth.accessTokenSecret,
-    function( error, data ) {
-      console.log( error, data );
-      res.render( "member_area.jade", {
-        locals: {
-          title: "member_area",
-          output: data
-        }
-      });
-    }
-  );
-  
+  User.find().all( function(users) {
+    res.render( "member_area.jade", {
+      locals: {
+        title: "member_area",
+        output: "@" + user.screenName,
+        dbCount: users.length
+      }
+    });
+  });
 });
 
 
