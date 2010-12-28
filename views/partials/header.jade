@@ -1,9 +1,14 @@
 h1= title
 
 ul#navigation
+  li
+    a( href = "/" ) Home
+
   - if (user)
     li
       a( href: "/member_area" ) Member area
+    li
+      a( href: "/mentions" ) Mentions
     li
       a( href: "/signout" ) Sign out
   - else

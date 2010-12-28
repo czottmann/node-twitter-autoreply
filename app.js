@@ -262,13 +262,36 @@ app.get( "/member_area", requireUser, function( req, res ) {
   User.find().all( function(users) {
     res.render( "member_area", {
       locals: {
-        title: "member_area",
-        output: "@" + req.user.screenName,
+        title: "Member area",
+        name: "@" + req.user.screenName,
         dbCount: users.length
       }
     });
   });
 });
+
+
+/**
+ * GET /member_area
+ * The inner sanctum.  Requires auth'd user, will trigger signin flow if not
+ * authenticated.
+ */
+
+app.get( "/mentions", requireUser, function( req, res ) {
+  oa.get( "http://api.twitter.com/1/statuses/mentions.json", req.user.accessToken, req.user.accessTokenSecret, function( error, data ) {
+    if (!error) {
+      res.render( "mentions", {
+        locals: {
+          mentions: JSON.parse(data),
+          title: "Member area: Mentions",
+          name: "@" + req.user.screenName
+        }
+      });
+    }
+  });
+});
+
+
 
 
 
