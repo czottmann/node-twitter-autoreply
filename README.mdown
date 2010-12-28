@@ -6,7 +6,7 @@ npm modules:
 - [node-oauth](https://github.com/ciaranj/node-oauth)
 - [mongoose](https://github.com/LearnBoost/mongoose)
 - [connect-mongodb](https://github.com/masylum/connect-mongodb)
-- [jade](https://github.com/visionmedia/jade)
+- [haml.js](https://github.com/visionmedia/haml.js)
 - [expresso](https://github.com/visionmedia/expresso)
 - [seq](https://github.com/substack/node-seq)
 
