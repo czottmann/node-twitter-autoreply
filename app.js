@@ -155,7 +155,7 @@ app.User = User = require("./models.js").User(db);
  */
 
 app.get( "/", function( req, res ) {
-  res.render( "index.haml", {
+  res.render( "index.jade", {
     locals: {
       title: "Twitter Auto Reply"
     }
@@ -228,7 +228,7 @@ app.get( "/member_area", requireUser, function( req, res ) {
   var user = req.user;
 
   User.find().all( function(users) {
-    res.render( "member_area.haml", {
+    res.render( "member_area.jade", {
       locals: {
         title: "member_area",
         output: "@" + user.screenName,
