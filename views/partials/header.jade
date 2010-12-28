@@ -1,0 +1,12 @@
+h1= title
+
+ul#navigation
+  - if (user)
+    li
+      a( href: "/member_area" ) Member area
+    li
+      a( href: "/signout" ) Sign out
+  - else
+    li
+      a( href: "/signin" ) Sign in with Twitter
+

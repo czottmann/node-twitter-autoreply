@@ -53,7 +53,7 @@ function mongoStoreConnectionArgs() {
 function requireUser( req, res, next ) {
   
   if ( !( req.session.oauth && req.session.oauth.accessToken && req.session.oauth.accessTokenSecret ) ) {
-    res.redirect("/login");
+    res.redirect("/signin");
   }
   else {
     Seq()
@@ -110,6 +110,21 @@ function requireUser( req, res, next ) {
 }
 
 
+// Middleware: Access control
+
+function loadUser( req, res, next ) {
+  if ( req.session.oauth && req.session.oauth.accessToken && req.session.oauth.accessTokenSecret ) {
+    User.find(req.session.oauth).first( function(user) {
+      req.user = user;
+      next();
+    });
+  }
+  else {
+    next();
+  }
+}
+
+
 
 
 //--- CONFIGURATION ------------------------------------------------------------
@@ -133,6 +148,7 @@ db = mongoose.connect( app.set("db-uri") );
 
 app.configure( function() {
   app.set( "views", __dirname + "/views" );
+  app.set( "view engine", "jade" );
   app.use( express.bodyDecoder() );
   app.use( express.cookieDecoder() );
   app.use( express.session({ store: mongoStore( mongoStoreConnectionArgs() ) }) );
@@ -144,6 +160,13 @@ app.configure( function() {
 
 app.User = User = require("./models.js").User(db);
 
+app.dynamicHelpers({
+  user: function( req, res ) {
+    return req.user;
+  }
+});
+
+
 
 
 
@@ -154,8 +177,8 @@ app.User = User = require("./models.js").User(db);
  * Home sweet home.
  */
 
-app.get( "/", function( req, res ) {
-  res.render( "index.jade", {
+app.get( "/", loadUser, function( req, res ) {
+  res.render( "index", {
     locals: {
       title: "Twitter Auto Reply"
     }
@@ -164,11 +187,11 @@ app.get( "/", function( req, res ) {
 
 
 /**
- * GET /login
+ * GET /signin
  * Redirect to OAuth provider page.
  */
 
-app.get( "/login", function( req, res ) {
+app.get( "/signin", function( req, res ) {
   oa.getOAuthRequestToken(
     function( error, oauthRequestToken, oauthRequestTokenSecret, results ) {
       if (error) {
@@ -183,6 +206,17 @@ app.get( "/login", function( req, res ) {
       }
     }
   );
+});
+
+
+/**
+ * GET /signout
+ * Destroys the session, effectively logging the user out.
+ */
+
+app.get( "/signout", function( req, res ) {
+  req.session.oauth = undefined;
+  res.redirect("/");
 });
 
 
@@ -220,18 +254,16 @@ app.get( "/oauth_callback", function( req, res ) {
 
 /**
  * GET /member_area
- * The inner sanctum.  Requires auth'd user, will trigger login flow if not
+ * The inner sanctum.  Requires auth'd user, will trigger signin flow if not
  * authenticated.
  */
 
 app.get( "/member_area", requireUser, function( req, res ) {
-  var user = req.user;
-
   User.find().all( function(users) {
-    res.render( "member_area.jade", {
+    res.render( "member_area", {
       locals: {
         title: "member_area",
-        output: "@" + user.screenName,
+        output: "@" + req.user.screenName,
         dbCount: users.length
       }
     });
