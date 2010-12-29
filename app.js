@@ -75,7 +75,7 @@ app.configure( function() {
   app.use( express.staticProvider( __dirname + "/public" ) );
 });
 
-app.User = User = require("./models").User(db);
+app.User = User = require("./models/user").User(db);
 
 app.dynamicHelpers({
   user: function( req, res ) {
