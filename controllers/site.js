@@ -1,4 +1,4 @@
-exports.controllers = function(oa) {
+exports.__ = function(oa) {
   return {
 
     /**

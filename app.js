@@ -60,8 +60,8 @@ app.configure( "production", function() {
 
 db = mongoose.connect( app.set("db-uri") );
 
-ah = require("./lib/helpers").ah(db);  // app helpers
-rmw = require("./lib/route_middleware").rmw(oa);  // app helpers
+ah = require("./lib/helpers").__(db);  // app helpers
+rmw = require("./lib/route_middleware").__(oa);  // app helpers
 
 app.configure( function() {
   app.set( "views", __dirname + "/views" );
@@ -89,7 +89,7 @@ app.dynamicHelpers({
 
 // Main
 
-site = require("./controllers/site").controllers(oa);
+site = require("./controllers/site").__(oa);
 
 app.get( "/", rmw.loadUser, site.index );
 app.get( "/signin", site.signin );
@@ -98,7 +98,7 @@ app.get( "/oauth_callback", site.oauth_callback );
 
 // Members area
 
-members = require("./controllers/members").controllers(oa);
+members = require("./controllers/members").__(oa);
 
 app.get( "/members", rmw.requireUser, members.index );
 app.get( "/members/mentions", rmw.requireUser, members.mentions );

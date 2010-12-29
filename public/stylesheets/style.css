@@ -1,4 +1,19 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
+  padding: 2em;
+}
+
+ul#navigation {
+  margin: 0 0 1em 0;
+  background-color: #eef;
+}
+
+#navigation li {
+  display: inline-block;
+  margin: 0.25em 0.75em;
+}
+
+
+
+#mentions li {
+  margin: 0.5em 0;
 }
