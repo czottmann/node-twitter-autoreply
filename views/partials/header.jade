@@ -6,11 +6,13 @@ ul#navigation
 
   - if (user)
     li
-      a( href: "/member_area" ) Member area
+      a( href: "/members" ) Member area
     li
-      a( href: "/mentions" ) Mentions
+      a( href: "/members/mentions" ) Mentions
     li
       a( href: "/signout" ) Sign out
+    li
+      @#{user.screenName}
   - else
     li
       a( href: "/signin" ) Sign in with Twitter
