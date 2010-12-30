@@ -4,11 +4,12 @@ npm modules:
 
 - [Express](http://expressjs.com/)
 - [node-oauth](https://github.com/ciaranj/node-oauth)
-- [mongoose](https://github.com/LearnBoost/mongoose)
+- [Mongoose](https://github.com/LearnBoost/mongoose)
 - [connect-mongodb](https://github.com/masylum/connect-mongodb)
-- [jade](https://github.com/visionmedia/jade)
-- [expresso](https://github.com/visionmedia/expresso)
-- [seq](https://github.com/substack/node-seq)
+- [Jade](https://github.com/visionmedia/jade)
+- [Expresso](https://github.com/visionmedia/expresso)
+- [Seq](https://github.com/substack/node-seq)
+- [Underscore.js](http://documentcloud.github.com/underscore/)
 
 Copy `app-config.js-default` to a new file `app-config.js` and put the Twitter
 OAuth consumer key and token in it.

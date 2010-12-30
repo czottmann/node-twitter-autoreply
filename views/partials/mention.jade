@@ -1,7 +1,10 @@
-li
-  = mention.text
+li.mention
+  = mention.status
+  br
+  = "#" + mention.id
   br
   | &mdash;
-  = "@" + mention.user.screen_name
-  &nbsp;
-  = "(" + mention.user.name + ")"
+  span.screen-name
+    = "@" + mention.sender.screenName
+  span.name
+    = mention.sender.name

@@ -5,7 +5,7 @@
 var express = require("express"),
   Seq = require("seq"),
   OAuth = require("oauth").OAuth,
-  mongoose = require("mongoose").Mongoose,
+  Mongoose = require("mongoose").Mongoose,
   mongoStore = require("connect-mongodb"),
   config = require("./app-config").config,
   
@@ -36,11 +36,6 @@ var express = require("express"),
 
 
 
-//--- HELPERS ------------------------------------------------------------------
-
-
-
-
 //--- CONFIGURATION ------------------------------------------------------------
 
 app.configure( "development", function() {
@@ -58,7 +53,7 @@ app.configure( "production", function() {
   app.use( express.errorHandler() );
 });
 
-db = mongoose.connect( app.set("db-uri") );
+db = Mongoose.connect( app.set("db-uri") );
 
 ah = require("./lib/helpers").__(db);  // app helpers
 rmw = require("./lib/route_middleware").__(oa);  // app helpers
@@ -75,13 +70,17 @@ app.configure( function() {
   app.use( express.staticProvider( __dirname + "/public" ) );
 });
 
-app.User = User = require("./models/user").User(db);
-
 app.dynamicHelpers({
   user: function( req, res ) {
     return req.user;
   }
 });
+
+User = require("./models/user").User(db);
+Tweet = require("./models/tweet").Tweet;
+Mention = require("./models/mention").Mention;
+
+
 
 
 
@@ -102,6 +101,7 @@ members = require("./controllers/members").__(oa);
 
 app.get( "/members", rmw.requireUser, members.index );
 app.get( "/members/mentions", rmw.requireUser, members.mentions );
+
 
 
 

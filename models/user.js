@@ -1,7 +1,12 @@
-var mongoose = require("mongoose").Mongoose;
+var Mongoose = require("mongoose").Mongoose;
 
-mongoose.model( "User", {
-  properties: [ "twID", "screenName", "profileImageURL", "accessToken", "accessTokenSecret" ], 
+Mongoose.model( "User", {
+  properties: [ "twID", "screenName", "profileImageURL", "accessToken", "accessTokenSecret", "lastCheckedMentionID" ], 
+
+  cast: {
+    lastCheckedMentionID: String
+  },
+
 
   indexes: [
     [ { "twID": 1 }, { unique: true } ],

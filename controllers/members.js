@@ -1,3 +1,7 @@
+var _ = require("underscore");
+
+
+
 exports.__ = function(oa) {
   return {
 
@@ -26,11 +30,37 @@ exports.__ = function(oa) {
      */
 
     mentions: function( req, res ) {
-      oa.get( "http://api.twitter.com/1/statuses/mentions.json", req.user.accessToken, req.user.accessTokenSecret, function( error, data ) {
+      var url = "http://api.twitter.com/1/statuses/mentions.json?count=50";
+
+      if (req.user.lastCheckedMentionID) {
+        url += "&since_id=" + req.user.lastCheckedMentionID;
+      }
+
+      oa.get( url, req.user.accessToken, req.user.accessTokenSecret, function( error, data ) {
+        var mentions;
+
+        // TODO: error handling
+
         if (!error) {
+
+          // Weed out the mentions by the current user, i.e. existing "wrong
+          // @{screen name}" tweets.
+          
+          mentions = _.reject( JSON.parse(data), function(m) {
+            return m.user.screen_name === req.user.screenName;
+          });
+
+          mentions = _.map( mentions, function(m) {
+            return new Mention(m);
+          });
+
+          _.each( mentions, function(m) {
+            m.guessLanguage(); 
+          });
+
           res.render( "mentions", {
             locals: {
-              mentions: JSON.parse(data),
+              mentions: mentions, 
               title: "Member area: Mentions"
             }
           });

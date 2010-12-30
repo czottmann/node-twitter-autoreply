@@ -17,3 +17,10 @@ ul#navigation {
 #mentions li {
   margin: 0.5em 0;
 }
+
+#mentions .mention .name {
+  color: #888;
+  font-size: 0.9em;
+  margin-left: 1em;
+}
+
