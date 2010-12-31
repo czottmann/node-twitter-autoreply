@@ -73,6 +73,9 @@ exports.__ = function(oa) {
             }
           });
         }
+        else {
+          throw new Error("Twitter error");
+        }
       });
     }
 

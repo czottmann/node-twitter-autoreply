@@ -1,5 +1,5 @@
 var Tweet = require("../models/tweet").Tweet,
-  Class = require("../lib/class").Class;
+  inherits = require("../lib/helpers.js").inherits;
 
 
 /**
@@ -9,13 +9,12 @@ var Tweet = require("../models/tweet").Tweet,
  * @param   oa {OAuth}
  */
 
-var Mention = Tweet.extend({
-  init: function( tweetHash, oa ) {
-    this.oa_ = oa;
-    this._super(tweetHash);
-  }
-});
+function Mention( tweetHash, oa ) {
+  Tweet.call( this, tweetHash );
+  this.oa_ = oa;
+}
 
+inherits( Mention, Tweet );
 
 exports.Mention = Mention;
 
