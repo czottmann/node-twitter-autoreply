@@ -30,7 +30,7 @@ exports.__ = function(oa) {
      */
 
     mentions: function( req, res ) {
-      var url = "http://api.twitter.com/1/statuses/mentions.json?count=50";
+      var url = "http://api.twitter.com/1/statuses/mentions.json?count=5";
 
       if (req.user.lastCheckedMentionID) {
         url += "&since_id=" + req.user.lastCheckedMentionID;
@@ -55,7 +55,15 @@ exports.__ = function(oa) {
           });
 
           _.each( mentions, function(m) {
-            m.guessLanguage(); 
+            console.log( "Guessing #" + m.id );
+            m.guessLanguage(
+              function(l) {
+                console.log( m.id + ": " + l );
+              },
+              function(error) {
+                console.log( m.id + ": " + error );
+              }
+            ); 
           });
 
           res.render( "mentions", {
