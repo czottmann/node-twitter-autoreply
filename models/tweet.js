@@ -58,7 +58,7 @@ var Tweet = Class.extend({
    *          (string) is passed as parameter.
    */
 
-  guessLanguage: function(callback) {
+  guessLanguage: function( fnSuccess, fnError ) {
     var that = this,
       url = [
         "http://uclassify.com/browse/uClassify/Text%20Language/ClassifyText",
@@ -92,7 +92,7 @@ var Tweet = Class.extend({
       }
       else if (!error) {
         if ( _.isFunction(fnError) ) {
-          fnError("Unsuspected HTTP status code");
+          fnError( "Unsuspected HTTP status code " + response.statusCode );
         }
       }
       else {
